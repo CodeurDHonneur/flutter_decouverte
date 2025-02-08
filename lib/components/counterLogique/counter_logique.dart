@@ -19,8 +19,12 @@ class _CounterWidgetState extends State<ParentWidget> {
 
   void _decrementCounter() {
     setState(() {
-      _counter--;
+      if(acceptDecrement()) _counter--;
     });
+  }
+
+  bool acceptDecrement() {
+    return _counter > 0;
   }
 
   @override
@@ -33,6 +37,7 @@ class _CounterWidgetState extends State<ParentWidget> {
         ChildWidget(
           onIncrementCounter: _incrementCounter,
           onDecrementCounter: _decrementCounter,
+          acceptDecrement: acceptDecrement(),
         )
       ],
     );
@@ -43,11 +48,13 @@ class _CounterWidgetState extends State<ParentWidget> {
 class ChildWidget extends StatefulWidget {
   final VoidCallback onIncrementCounter;
   final VoidCallback onDecrementCounter;
+  final bool acceptDecrement;
 
   const ChildWidget(
       {super.key,
       required this.onIncrementCounter,
-      required this.onDecrementCounter});
+      required this.onDecrementCounter,
+      required this.acceptDecrement});
 
   @override
   State<ChildWidget> createState() => _ChildWidgetState();
@@ -59,10 +66,12 @@ class _ChildWidgetState extends State<ChildWidget> {
     return Column(
       children: [
         ElevatedButton(
-            onPressed: widget.onIncrementCounter, child: Text("Incrémenter")),
+            onPressed: widget.onIncrementCounter, 
+            child: Text("Incrémenter")),
         SizedBox(height: 15),
         ElevatedButton(
-            onPressed: widget.onDecrementCounter, child: Text("Decrémenter")),
+            onPressed: widget.acceptDecrement ? widget.onDecrementCounter : null, 
+            child: Text("Decrémenter")),
       ],
     );
   }
